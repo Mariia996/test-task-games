@@ -8,16 +8,24 @@ import {
   categoriesRequest,
   categoriesSuccess,
   categoriesError,
+  setGames,
 } from './games-actions';
 
 const initialStateGames = [];
 
 const initialStateCategories = [];
 
+const initialStateFilteredGames = [];
+
 const initialStateError = null;
 
 const games = createReducer(initialStateGames, {
   [gamesSuccess]: (_, { payload }) => payload,
+});
+
+const filteredGames = createReducer(initialStateFilteredGames, {
+  [gamesSuccess]: (_, { payload }) => payload,
+  [setGames]: (_, { payload }) => payload,
 });
 
 const categories = createReducer(initialStateCategories, {
@@ -42,6 +50,7 @@ const error = createReducer(initialStateError, {
 
 export default combineReducers({
   games,
+  filteredGames,
   categories,
   error,
   loading,

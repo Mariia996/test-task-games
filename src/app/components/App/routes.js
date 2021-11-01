@@ -1,5 +1,5 @@
 export const routes = {
   auth: '/',
   games: '/games',
-  play: '/play',
+  play: '/play/:type',
 };

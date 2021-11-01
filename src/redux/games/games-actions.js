@@ -8,6 +8,8 @@ export const categoriesRequest = createAction('categories/categoriesRequest');
 export const categoriesSuccess = createAction('categories/categoriesSuccess');
 export const categoriesError = createAction('categories/categoriesError');
 
+export const setGames = createAction('games/setGames');
+
 const actions = {
   gamesRequest,
   gamesSuccess,
@@ -15,6 +17,7 @@ const actions = {
   categoriesRequest,
   categoriesSuccess,
   categoriesError,
+  setGames,
 };
 
 export default actions;

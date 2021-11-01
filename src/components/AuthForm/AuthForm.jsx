@@ -1,8 +1,12 @@
-import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Grid, TextField, Paper, Typography, Button } from '@mui/material';
 import { useFormik, form } from 'formik';
 import { initialValues, getValidationSchema } from './config';
 import { logIn } from '../../redux/auth/auth-operations';
+import { getError } from '../../redux/auth/auth-selectors';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { makeStyles } from '@mui/styles';
 
@@ -32,6 +36,7 @@ const useStyles = makeStyles(theme => ({
 const AuthForm = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const error = useSelector(state => getError(state), shallowEqual);
 
   const formik = useFormik({
     initialValues: initialValues(),
@@ -40,6 +45,15 @@ const AuthForm = () => {
       dispatch(logIn(values));
     },
   });
+
+  useEffect(() => {
+    if (error) {
+      const errorMessage = error.message.includes('400')
+        ? 'Incorrect email or password'
+        : 'Oops! Something went wrong. Try later.';
+      toast.error(errorMessage, { position: toast.POSITION.TOP_RIGHT });
+    }
+  }, [error]);
 
   const field = (name, label, type = 'string') => (
     <TextField
@@ -58,42 +72,47 @@ const AuthForm = () => {
     />
   );
   return (
-    <Paper className={classes.paper}>
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignitems="center"
-        className={classes.formContainer}
-      >
-        <Typography
-          component="h2"
-          variant="h4"
-          align="center"
-          className={classes.formTitle}
+    <>
+      <Paper className={classes.paper}>
+        <Grid
+          container
+          direction="column"
+          justifyContent="center"
+          alignitems="center"
+          className={classes.formContainer}
         >
-          Welcome!
-        </Typography>
-        <Typography component="p" align="center">
-          Please login to start
-        </Typography>
-        <Grid container direction="column" className={classes.inputContainer}>
-          <form noValidate onSubmit={formik.handleSubmit}>
-            <Grid item>{field('username', 'Enter your name')}</Grid>
-            <Grid item>{field('password', 'Enter your password')}</Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="secondary"
-              className={classes.submitBtn}
-            >
-              Login
-            </Button>
-          </form>
+          <Typography
+            component="h2"
+            variant="h4"
+            align="center"
+            className={classes.formTitle}
+          >
+            Welcome!
+          </Typography>
+          <Typography component="p" align="center">
+            Please login to start
+          </Typography>
+          <Grid container direction="column" className={classes.inputContainer}>
+            <form noValidate onSubmit={formik.handleSubmit}>
+              <Grid item>{field('username', 'Enter your name')}</Grid>
+              <Grid item>
+                {field('password', 'Enter your password', 'password')}
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="secondary"
+                className={classes.submitBtn}
+              >
+                Login
+              </Button>
+            </form>
+          </Grid>
         </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
+      <ToastContainer />
+    </>
   );
 };
 

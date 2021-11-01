@@ -8,21 +8,37 @@ import {
   OutlinedInput,
   FormControl,
   InputAdornment,
-  IconButton,
   Button,
 } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import SearchIcon from '@mui/icons-material/Search';
 import { getUser } from '../../redux/auth/auth-selectors';
 import { logOut } from '../../redux/auth/auth-operations';
 import { getIcon } from './icons';
+import { getGames } from '../../redux/games/games-selectors';
+import { setFilteredGames } from '../../redux/games/games-operations';
 
-const Header = ({ handleClickSearch }) => {
+const Header = () => {
   const dispatch = useDispatch();
   const user = useSelector(state => getUser(state));
+  const games = useSelector(state => getGames(state));
   const [searchValue, setSearchValue] = useState('');
 
   const handleLogoutClick = () => {
     dispatch(logOut({ username: user?.username }));
+  };
+
+  const handleChangeSearch = value => {
+    setSearchValue(value);
+    const searchResult = games.filter(
+      game =>
+        game.name.toLowerCase() === searchValue.toLowerCase() ||
+        game.code === searchValue.toLowerCase() ||
+        game.name.toLowerCase().includes(searchValue.toLowerCase()),
+    );
+    value
+      ? dispatch(setFilteredGames(searchResult))
+      : dispatch(setFilteredGames(games));
   };
 
   return (
@@ -53,22 +69,14 @@ const Header = ({ handleClickSearch }) => {
             size="small"
             margin="none"
           >
-            <InputLabel htmlFor="outlined-adornment-password">
-              Search Game
-            </InputLabel>
+            <InputLabel htmlFor="search">Search Game</InputLabel>
             <OutlinedInput
-              id="outlined-adornment-password"
+              id="search"
               value={searchValue}
-              onChange={({ target: { value } }) => setSearchValue(value)}
+              onChange={({ target: { value } }) => handleChangeSearch(value)}
               endAdornment={
                 <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickSearch}
-                    edge="end"
-                  >
-                    {/* {values.showPassword ? <VisibilityOff /> : <Visibility />} */}
-                  </IconButton>
+                  <SearchIcon />
                 </InputAdornment>
               }
               label="Search Game"

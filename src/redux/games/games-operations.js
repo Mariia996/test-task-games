@@ -7,6 +7,7 @@ import {
   categoriesRequest,
   categoriesSuccess,
   categoriesError,
+  setGames,
 } from './games-actions';
 
 const gamesService = new GamesService();
@@ -29,4 +30,8 @@ export const getAllCategories = () => async dispatch => {
   } catch (error) {
     dispatch(categoriesError(error));
   }
+};
+
+export const setFilteredGames = games => dispatch => {
+  dispatch(setGames(games));
 };
